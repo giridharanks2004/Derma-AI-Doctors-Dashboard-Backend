@@ -1,5 +1,6 @@
 import DoctorsDB from "../Models/doctorInfoModel.mjs"
 import bcrypt from "bcrypt"
+import { DoctorsResponseDTO } from "../DTO/DoctorsResponseDTO.mjs"
 
 const createDoctorInfo = async (doctorDetails) => {
     try {
@@ -14,7 +15,9 @@ const createDoctorInfo = async (doctorDetails) => {
 }
 const getAllDoctors = async (filter) => {
     try {
-        return await DoctorsDB.find(filter)
+        const doctors = await DoctorsDB.find(filter)
+        const doctorsAbstracted = doctors.map((doctor) => DoctorsResponseDTO(doctor))
+        return doctorsAbstracted
     } catch (e) {
         throw new Error(e.message)
     }
@@ -22,7 +25,7 @@ const getAllDoctors = async (filter) => {
 const getDoctorById = async (id) => {
     try {
         const doc_info = await DoctorsDB.findById(id)
-        return doc_info
+        return DoctorsResponseDTO(doc_info)
     } catch (e) {
         throw new Error(e.message)
     }
@@ -40,6 +43,51 @@ const deleteDoctorById = async (id) => {
     }
 }
 
+const updateName = async (id,newName) => {
+    try {
+        const doctorInfo = await DoctorsDB.findOne({_id : id})
+        if(doctorInfo){
+            doctorInfo.doctorName = newName
+            await doctorInfo.save()
+            return DoctorsResponseDTO(doctorInfo)
+        }
+        return null
+     
+    } catch (e) {
+        throw new Error(e.message)
+    }
+}
+
+const updateEmail = async (id , newEmail) => {
+    try {
+        const doctorInfo = await DoctorsDB.findOne({_id : id})
+        if(doctorInfo){
+            doctorInfo.email = newEmail
+            await doctorInfo.save()
+            return DoctorsResponseDTO(doctorInfo)
+        }
+        return null
+    } catch (e) {
+        throw new Error(e.message)
+    }
+}
+
+const updatePassword = async (id , oldPassword , newPassword) => {
+    try {
+        const doctorInfo = await DoctorsDB.findOne({_id : id})
+        if(doctorInfo){
+           const isMatched = await bcrypt.compare(oldPassword,doctorInfo.password)
+           if(!isMatched){
+                throw new Error("pwdNotMatch")
+           }
+           doctorInfo.password = await bcrypt.hash(newPassword,10)
+        }
+        return null
+    } catch (e) {
+        throw new Error(e.message)
+    }
+    
+}
 
 
-export default {createDoctorInfo,getDoctorById,deleteDoctorById,getAllDoctors}
+export default {createDoctorInfo,getDoctorById,deleteDoctorById,getAllDoctors,updateName,updateEmail,updatePassword}
