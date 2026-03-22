@@ -3,7 +3,7 @@ import dotenv from "dotenv"
 import morgan from "morgan"
 import cookieParser from "cookie-parser"
 import { dbconnect } from "./src/Utils/dbconnect.mjs"
-
+import doctorsRouter from "./src/Routes/doctorsRoutes.mjs"
 dotenv.config()
 
 const app = express()
@@ -11,6 +11,7 @@ const app = express()
 app.use(express.json())
 app.use(morgan("dev"))
 app.use(cookieParser())
+app.use(doctorsRouter)
 
 
 app.listen(process.env.PORT,()=>{

@@ -6,10 +6,9 @@ const doctorModel = mongoose.Schema({
         required : true,
         unique : true
     },
-    doctorSpeciality : {
+    docType: {
         type : String,
         required : true,
-        unique : true,
     },
     email : {
         type : String,
@@ -27,7 +26,6 @@ const doctorModel = mongoose.Schema({
     timestamps : true
 })
 
-doctorModel.index({email : 1});
 
-export default mongoose.model(doctorModel,"doctorInfomation")
+export default mongoose.model("doctorInfomation",doctorModel)
 
