@@ -74,20 +74,35 @@ const updateEmail = async (id , newEmail) => {
 
 const updatePassword = async (id , oldPassword , newPassword) => {
     try {
-        const doctorInfo = await DoctorsDB.findOne({_id : id})
+        const doctorInfo = await DoctorsDB.findById(id)
+        console.log(doctorInfo)
         if(doctorInfo){
            const isMatched = await bcrypt.compare(oldPassword,doctorInfo.password)
+           console.log(oldPassword)
            if(!isMatched){
-                throw new Error("pwdNotMatch")
+                return false
            }
            doctorInfo.password = await bcrypt.hash(newPassword,10)
+           await doctorInfo.save()
+           return true
         }
-        return null
     } catch (e) {
         throw new Error(e.message)
+    }  
+}
+
+const updateStatus = async (id,currentStatus) => {
+    try{
+        const doctorInfo = await DoctorsDB.findOne({_id : id})
+        if(doctorInfo){
+           doctorInfo.doctorStatus = currentStatus
+           await doctorInfo.save()
+           return DoctorsResponseDTO(doctorInfo)
+        }
+    } catch(e){
+        throw new Error(e.message)
     }
-    
 }
 
 
-export default {createDoctorInfo,getDoctorById,deleteDoctorById,getAllDoctors,updateName,updateEmail,updatePassword}
+export default {createDoctorInfo,getDoctorById,deleteDoctorById,getAllDoctors,updateName,updateEmail,updatePassword,updateStatus}

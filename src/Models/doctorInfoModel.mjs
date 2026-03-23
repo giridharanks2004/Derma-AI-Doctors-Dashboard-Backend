@@ -21,6 +21,12 @@ const doctorModel = mongoose.Schema({
     password : {
         type : String,
         required : true
+    },
+    doctorStatus : {
+        type : String,
+        required : true,
+        enum : ["Active","In-Active"],
+        default : "Active",
     }
 },{
     timestamps : true
