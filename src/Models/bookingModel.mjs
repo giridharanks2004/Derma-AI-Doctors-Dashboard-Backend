@@ -1,5 +1,7 @@
 import mongoose, { Schema } from "mongoose"
 
+export const BookingStatusEnums = ["Requested","Viewed","Accepted","Resolved","Pending"]
+
 const bookingModel = new mongoose.Schema({
     userId : {
         type : String,
@@ -23,10 +25,10 @@ const bookingModel = new mongoose.Schema({
     },
     bookingStatus : {
         type : String,
-        enum : ["Requested","Viewed","Accepted","Resolved","Pending"],
+        enum : BookingStatusEnums,
         default : "Requested"
     }
 })
-
+bookingModel.index({doctorId : 1})
 export default mongoose.model("doctorBooking",bookingModel)
 
